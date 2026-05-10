@@ -10,7 +10,12 @@ app.use(cors());
 app.use(express.json()); // to parse JSON bodies
 
 // Serve static files (HTML, CSS, JS) from the current directory
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname)));
+
+// Route for the home page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Simulated Database (In-Memory Array)
 const usersDB = [];
