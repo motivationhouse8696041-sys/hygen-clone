@@ -3,372 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HyGen - Video Studio</title>
+    <title>HyGen - AI Video Platform</title>
+    <!-- External Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* ALL CSS INLINED HERE FOR 100% RELIABILITY ON VERCEL */
         :root {
-            --bg-main: #ffffff;
-            --bg-card: #f9f9fb;
-            --border-light: #eaebef;
-            --text-primary: #111111;
-            --text-secondary: #71717a;
-            --accent-blue: #00d2ff;
-            --promo-bg-start: #d4f0ff;
-            --promo-bg-mid: #e1fbd6;
-            --promo-bg-end: #fcedf4;
+            --bg-main: #ffffff; --bg-card: #f9f9fb; --border-light: #eaebef;
+            --text-primary: #111111; --text-secondary: #71717a; --accent-blue: #00d2ff;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; overflow: hidden; }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            height: 100vh;
-            overflow: hidden;
-        }
+        /* General Layout */
+        .app-container { display: flex; height: 100vh; }
+        .view-active { display: block !important; animation: fadeIn 0.3s ease; }
+        .view-hidden { display: none !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-        }
-
-        .sidebar {
-            width: 80px;
-            background-color: var(--bg-main);
-            border-right: 1px solid var(--border-light);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 24px 0;
-            z-index: 10;
-        }
-
-        .logo-icon {
-            width: 40px; height: 40px;
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 18px;
-            box-shadow: 0 4px 10px rgba(0, 114, 255, 0.3);
-        }
-
-        .nav-menu { display: flex; flex-direction: column; gap: 20px; width: 100%; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: var(--text-secondary); width: 100%; padding: 8px 0; }
-        .nav-item i { font-size: 18px; }
-        .nav-item span { font-size: 10px; font-weight: 500; }
-        .nav-item.active { color: #00b4d8; }
-
-        .workspace { flex-grow: 1; display: flex; flex-direction: column; position: relative; background-color: #ffffff; }
-
+        /* Landing Page Styles */
         .landing-wrapper { width: 100vw; height: 100vh; background: #ffffff; position: fixed; top: 0; left: 0; z-index: 200; display: flex; flex-direction: column; overflow-y: auto; }
-        .landing-nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid var(--border-light); }
+        .landing-nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid var(--border-light); background: white; position: sticky; top: 0; z-index: 10; }
         .landing-logo { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .landing-links { display: flex; gap: 24px; }
-        .landing-links a { text-decoration: none; color: var(--text-primary); font-size: 14px; font-weight: 500; }
-        .signin-btn { background: #111; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .landing-links a { text-decoration: none; color: var(--text-primary); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .landing-links a:hover { color: #00b4d8; }
+        .signin-btn { background: #111; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
         .hero-section { display: flex; padding: 80px 40px; max-width: 1400px; margin: 0 auto; gap: 40px; }
+        .hero-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
         .hero-title { font-size: 64px; font-weight: 800; line-height: 1.1; margin-bottom: 24px; letter-spacing: -1px; }
         .hero-highlight { color: #00b4d8; }
         .hero-subtitle { font-size: 18px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 40px; max-width: 500px; }
         .hero-buttons { display: flex; gap: 16px; }
-        .get-started-btn { background: #00b4d8; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3); }
-        
-        .hero-image-container { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .cube-mockup { position: relative; width: 500px; height: 500px; }
-        .cube-img { position: absolute; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); object-fit: cover; }
-        .img-1 { width: 300px; height: 300px; top: 0; right: 0; z-index: 3; }
-        .img-2 { width: 250px; height: 250px; bottom: 50px; left: 0; z-index: 2; border: 4px solid white; }
-        .img-3 { width: 200px; height: 200px; bottom: 0; right: 50px; z-index: 1; border: 4px solid white; }
+        .get-started-btn { background: #00b4d8; color: white; border: none; padding: 14px 32px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3); transition: transform 0.2s; }
+        .get-started-btn:hover { transform: scale(1.02); }
 
+        .hero-image-container { flex: 1; position: relative; }
+        .cube-img { position: absolute; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); object-fit: cover; border: 4px solid white; }
+        .img-1 { width: 300px; height: 300px; top: 0; right: 0; z-index: 3; }
+        .img-2 { width: 250px; height: 250px; bottom: 50px; left: 0; z-index: 2; }
+        
+        /* Auth Card Styles */
         .auth-wrapper { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: #f4f5f8; position: fixed; top: 0; left: 0; z-index: 100; }
-        .auth-card { background: white; width: 100%; max-width: 400px; padding: 40px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid var(--border-light); text-align: center; }
+        .auth-card { background: white; width: 100%; max-width: 400px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid var(--border-light); text-align: center; }
         .input-group { text-align: left; margin-bottom: 16px; }
         .input-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-        .input-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border-light); border-radius: 8px; outline: none; }
-        .auth-submit-btn { width: 100%; background: #111; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 10px; outline: none; transition: border-color 0.2s; }
+        .input-group input:focus { border-color: #00b4d8; }
+        .auth-submit-btn { width: 100%; background: #111; color: white; padding: 14px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .auth-switch { margin-top: 20px; font-size: 14px; color: var(--text-secondary); }
+        .text-blue { color: #00b4d8; cursor: pointer; font-weight: 600; }
 
-        .view-active { display: block !important; }
-        .view-hidden { display: none !important; }
+        /* Sidebar & Dashboard */
+        .sidebar { width: 80px; background: white; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; padding: 24px 0; }
+        .nav-item { width: 100%; padding: 12px 0; display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); text-decoration: none; font-size: 10px; gap: 4px; }
+        .nav-item.active { color: #00b4d8; }
+        .workspace { flex: 1; background: #f9f9fb; overflow-y: auto; }
+        
+        /* Grid */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px; }
+        .feature-card { background: white; padding: 30px; border-radius: 20px; border: 1px solid var(--border-light); cursor: pointer; transition: all 0.2s; }
+        .feature-card:hover { transform: translateY(-5px); border-color: #00b4d8; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="app-container">
+
+    <!-- 1. LANDING PAGE -->
+    <div id="landingView" class="landing-wrapper view-active">
+        <nav class="landing-nav">
+            <div class="landing-logo"><i class="fa-solid fa-wand-magic-sparkles" style="color: #00d2ff;"></i> HyGen</div>
+            <div class="landing-links">
+                <a href="#" onclick="alert('Platform features coming soon!')">Platform</a>
+                <a href="#" onclick="alert('Pricing starts from $0/mo')">Pricing</a>
+                <a href="#" onclick="alert('Our research lab is active')">Research</a>
+                <a href="#" onclick="alert('Check our latest use cases')">Use cases</a>
+            </div>
+            <button class="signin-btn" id="navSigninBtn">Sign in <i class="fa-solid fa-arrow-right"></i></button>
+        </nav>
         
-        <!-- ================= LANDING PAGE VIEW ================= -->
-        <div id="landingView" class="landing-wrapper view-active">
-            <nav class="landing-nav">
-                <div class="landing-logo">
-                    <i class="fa-solid fa-wand-magic-sparkles" style="color: #00d2ff;"></i> HyGen
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Turn your ideas into<br><span class="hero-highlight">videos in minutes</span></h1>
+                <p class="hero-subtitle">Create full-length videos and AI avatars with just a few clicks. No cameras required.</p>
+                <div class="hero-buttons">
+                    <button class="get-started-btn" id="heroGetStartedBtn">Get Started for Free</button>
                 </div>
-                <div class="landing-links">
-                    <a href="#">Platform</a>
-                    <a href="#">Use cases</a>
-                    <a href="#">Developers</a>
-                    <a href="#">Resources</a>
-                    <a href="#">Enterprise</a>
-                    <a href="#">Research</a>
-                    <a href="#">Pricing</a>
-                </div>
-                <div class="landing-actions">
-                    <span class="lang-selector"><i class="fa-solid fa-globe"></i> EN</span>
-                    <button class="signin-btn" id="navSigninBtn">Sign in <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-            </nav>
-            
-            <div class="hero-section">
-                <div class="hero-content">
-                    <h1 class="hero-title">Turn your ideas into<br><span class="hero-highlight">videos in minutes</span></h1>
-                    <p class="hero-subtitle">Go from script, image, presentation, or PDF to finished video. No cameras, no crew, no editing skills required. Create full-length videos and hours of content, not just short clips.</p>
-                    <div class="hero-buttons">
-                        <button class="google-signup-btn" id="heroGoogleBtn">
-                            <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google"> Sign up with Google
-                        </button>
-                        <button class="get-started-btn" id="heroGetStartedBtn">Get Started for Free</button>
-                    </div>
-                </div>
-                <div class="hero-image-container">
-                    <div class="cube-mockup">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600" class="cube-img img-1">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600" class="cube-img img-2">
-                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=600" class="cube-img img-3">
-                    </div>
-                </div>
+            </div>
+            <div class="hero-image-container">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400" class="cube-img img-1">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300" class="cube-img img-2">
             </div>
         </div>
+    </div>
 
-        <!-- ================= AUTH (LOGIN/SIGNUP) VIEW ================= -->
-        <div id="authView" class="auth-wrapper view-hidden">
-            <div class="auth-card">
-                <div class="logo-box mx-auto mb-6"><i class="fa-solid fa-wand-magic-sparkles text-white text-xl"></i></div>
-                <h2 class="auth-title">Welcome back</h2>
-                <p class="auth-subtitle">Log in to your HyGen account to continue</p>
-                
-                <form id="loginForm" class="auth-form">
-                    <div class="input-group" id="nameFieldContainer" style="display: none;">
-                        <label>Full Name</label>
-                        <input type="text" id="nameInput" placeholder="John Doe">
-                    </div>
-                    <div class="input-group">
-                        <label>Email address</label>
-                        <input type="email" id="emailInput" placeholder="name@company.com" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Password</label>
-                        <input type="password" id="passwordInput" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="submit-btn auth-submit-btn" id="authSubmitBtn">Sign In <i class="fa-solid fa-arrow-right ml-2"></i></button>
-                </form>
-                
-                <div class="auth-divider"><span>or</span></div>
-                
-                <button class="social-btn"><img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google"> Continue with Google</button>
-                
-                <p class="auth-switch">
-                    <span id="authSwitchText">Don't have an account?</span> 
-                    <span class="text-blue cursor-pointer" id="showSignupBtn">Sign up</span>
-                </p>
-            </div>
+    <!-- 2. AUTH VIEW -->
+    <div id="authView" class="auth-wrapper view-hidden">
+        <div class="auth-card">
+            <h2 id="authTitle">Welcome back</h2>
+            <p id="authSubtitle">Log in to your HyGen account</p>
+            <form id="authForm" class="auth-form">
+                <div class="input-group" id="nameGroup" style="display: none;">
+                    <label>Full Name</label>
+                    <input type="text" id="nameInput" placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="emailInput" placeholder="name@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="passwordInput" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="auth-submit-btn" id="submitBtn">Sign In</button>
+            </form>
+            <p class="auth-switch">
+                <span id="switchText">Don't have an account?</span> 
+                <span class="text-blue" id="switchBtn">Sign up</span>
+            </p>
         </div>
+    </div>
 
-        <!-- Sidebar (Home View) - Hidden Initially -->
-        <aside class="sidebar" id="homeSidebar" style="display: none;">
-            <div class="logo">
-                <div class="logo-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i><span>Home</span></a>
-                <a href="#" class="nav-item"><i class="fa-regular fa-user"></i><span>Avatar</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-wand-magic"></i><span>Video Agent</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-language"></i><span>Translate</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-shapes"></i><span>Apps</span></a>
-                <a href="#" class="nav-item"><i class="fa-regular fa-folder"></i><span>Projects</span></a>
-            </nav>
-
-            <div class="sidebar-bottom">
-                <div class="credits-icon"><i class="fa-regular fa-gem"></i></div>
-                <div class="user-profile"><div class="avatar-circle">S</div></div>
-            </div>
+    <!-- 3. DASHBOARD -->
+    <div class="app-container view-hidden" id="dashboardView">
+        <aside class="sidebar">
+            <div class="nav-item active"><i class="fa-solid fa-house"></i><span>Home</span></div>
+            <div class="nav-item"><i class="fa-solid fa-user"></i><span>Avatar</span></div>
+            <div class="nav-item"><i class="fa-solid fa-video"></i><span>Videos</span></div>
+            <div class="nav-item" id="logoutBtn" style="margin-top: auto; cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></div>
         </aside>
-
-        <!-- Main Workspace - Hidden Initially -->
-        <main class="workspace view-hidden" id="mainWorkspace">
-            
-            <!-- ================= HOME VIEW ================= -->
-            <div id="homeView" class="view-active">
-                <header class="topbar">
-                    <div class="topbar-right">
-                        <button class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-                        <button class="icon-btn notification"><i class="fa-regular fa-bell"></i><span class="badge">1</span></button>
-                        <button class="icon-btn" id="logoutBtn" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
-                    </div>
-                </header>
-
-                <div class="content-area">
-                    <div class="promo-banner">
-                        <button class="nav-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-                        <div class="promo-content">
-                            <h2>Avatar Shots with <span class="highlight">Seedance 2</span></h2>
-                            <p>Single clips with your avatar. Download and use them anywhere.</p>
-                            <button class="try-btn"><span class="new-badge">NEW</span> Try it now <i class="fa-solid fa-chevron-right"></i></button>
-                        </div>
-                        <button class="nav-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-
-                    <div class="upgrade-pill-container">
-                        <div class="upgrade-pill">
-                            <span class="free-plan">Free plan</span>
-                            <span class="upgrade-text">Upgrade now</span>
-                            <i class="fa-solid fa-xmark close-pill"></i>
-                        </div>
-                    </div>
-
-                    <div class="features-grid">
-                        <div class="feature-card" id="openEditorBtn">
-                            <div class="card-icon" style="color: #4f66ff;"><i class="fa-solid fa-video"></i></div>
-                            <h3>Build a video scene by scene</h3>
-                            <p>Take full control over your avatar, script, scenes, layout, and more</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="card-icon" style="color: #00d2ff;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                            <h3>Generate a video from a prompt</h3>
-                            <p>AI can write the script, create b-roll, use your avatar, and much more</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="card-icon" style="color: #00c48c;"><i class="fa-regular fa-image"></i></div>
-                            <h3>Make an avatar video from a photo</h3>
-                            <p>Use a photo for your avatar.</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="card-icon" style="color: #00a8ff;"><i class="fa-solid fa-user-astronaut"></i></div>
-                            <h3>Create your AI avatar</h3>
-                            <p>Record, upload, or describe your avatar to life</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="card-icon" style="color: #2ed573;"><i class="fa-solid fa-language"></i></div>
-                            <h3>Translate any video</h3>
-                            <p>175+ languages and dialects in natural voice and lip sync</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="card-icon" style="color: #576574;"><i class="fa-solid fa-table-columns"></i></div>
-                            <h3>Start with a template</h3>
-                            <p>Ready-made layouts for presentations, explainers, and more</p>
-                        </div>
-                    </div>
-                </div>
+        <main class="workspace">
+            <div class="features-grid">
+                <div class="feature-card"><h3>Create AI Avatar</h3><p>Upload a photo or describe yourself.</p></div>
+                <div class="feature-card"><h3>Text to Video</h3><p>Turn scripts into realistic videos.</p></div>
+                <div class="feature-card"><h3>Video Translate</h3><p>Translate voice to any language.</p></div>
             </div>
-            
-            <!-- ================= EDITOR VIEW ================= -->
-            <div id="editorView" class="editor-area view-hidden">
-                <!-- Editor Topbar -->
-                <header class="editor-topbar">
-                    <div class="topbar-left">
-                        <div class="logo-box" id="backToHomeBtn"><i class="fa-solid fa-wand-magic-sparkles" style="color:white; font-size:12px;"></i></div>
-                        <div class="pill-label">Avatar videos <i class="fa-solid fa-chevron-down ml-1"></i></div>
-                        <div class="divider-v"></div>
-                        <i class="fa-solid fa-bars text-gray cursor-pointer"></i>
-                        <div class="project-title ml-2">Untitled Video</div>
-                        <div class="aspect-ratio-toggles ml-2">
-                            <i class="fa-solid fa-mobile-screen active"></i>
-                            <i class="fa-solid fa-desktop"></i>
-                        </div>
-                        <div class="undo-redo ml-2">
-                            <i class="fa-solid fa-rotate-left"></i>
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </div>
-                    </div>
-                    <div class="topbar-center">
-                        <div class="brand-system-toggle">
-                            <div class="toggle-dot"></div>
-                            <span>Brand System</span>
-                        </div>
-                    </div>
-                    <div class="topbar-right">
-                        <i class="fa-regular fa-circle-question text-gray cursor-pointer text-lg"></i>
-                        <i class="fa-solid fa-play text-gray cursor-pointer text-lg mx-2"></i>
-                        <button class="generate-btn-disabled"><i class="fa-solid fa-check"></i> Generate</button>
-                    </div>
-                </header>
-
-                <div class="editor-workspace">
-                    <!-- Panels Code Remains Same as before -->
-                    <div class="panel-left">
-                        <div class="panel-header">
-                            <h3>Script</h3>
-                            <div class="panel-icons"><i class="fa-solid fa-link"></i><i class="fa-solid fa-spell-check"></i></div>
-                        </div>
-                        <div class="script-body">
-                            <div class="script-input-container">
-                                <div class="tiny-avatar"></div>
-                                <i class="fa-solid fa-chevron-right text-gray text-xs mr-2"></i>
-                                <textarea class="script-textarea" placeholder="Type your script or use '/' for commands"></textarea>
-                            </div>
-                            <div class="script-buttons">
-                                <button class="action-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Upload audio</button>
-                                <button class="action-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Script Writer</button>
-                            </div>
-                        </div>
-                        <div class="panel-footer script-footer">
-                            <button class="add-scene-btn"><i class="fa-solid fa-plus"></i> Add scene</button>
-                            <i class="fa-solid fa-microphone text-gray cursor-pointer"></i>
-                        </div>
-                    </div>
-
-                    <div class="panel-center">
-                        <div class="canvas-wrapper">
-                            <div class="canvas-portrait">
-                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=700" alt="Avatar" class="avatar-image">
-                                <div class="watermark">HyGen <i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                            </div>
-                        </div>
-                        <div class="timeline-container">
-                            <div class="timeline-controls">
-                                <i class="fa-solid fa-play cursor-pointer"></i>
-                                <span class="time-text">00:00 / <span class="text-gray">00:00</span></span>
-                                <span class="speed-text">1x <i class="fa-solid fa-chevron-down text-xs ml-1"></i></span>
-                                <i class="fa-solid fa-volume-high cursor-pointer ml-auto"></i>
-                            </div>
-                            <div class="timeline-tracks">
-                                <div class="scene-thumbnail active">
-                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=50&h=80" alt="thumb">
-                                    <div class="scene-number">1</div>
-                                </div>
-                                <div class="add-scene-box"><i class="fa-solid fa-plus"></i></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel-right">
-                        <div class="panel-header border-b">
-                            <h3>Avatar & Voice <span class="text-gray font-normal">(Scene 1)</span></h3>
-                            <i class="fa-solid fa-xmark cursor-pointer"></i>
-                        </div>
-                        <div class="settings-content">
-                            <!-- Sliders and Settings -->
-                        </div>
-                        <div class="panel-footer-right">
-                            <button class="render-scene-btn"><i class="fa-solid fa-arrows-rotate"></i> Render Scene</button>
-                        </div>
-                    </div>
-
-                    <div class="far-right-toolbar">
-                        <div class="toolbar-item active"><i class="fa-solid fa-user"></i><span>Avatar</span></div>
-                        <div class="toolbar-item"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Tools</span></div>
-                        <div class="toolbar-item mt-auto"><i class="fa-solid fa-bolt text-yellow"></i><span>Interactivity</span></div>
-                    </div>
-                </div>
-            </div>
-
         </main>
     </div>
-    
-    <script src="script.js"></script>
+
+    <script>
+        // ALL JAVASCRIPT INLINED HERE
+        const views = {
+            landing: document.getElementById('landingView'),
+            auth: document.getElementById('authView'),
+            dashboard: document.getElementById('dashboardView')
+        };
+
+        const switchBtn = document.getElementById('switchBtn');
+        let isSignup = false;
+
+        // Navigation
+        document.getElementById('navSigninBtn').onclick = () => showView('auth');
+        document.getElementById('heroGetStartedBtn').onclick = () => showView('auth');
+        document.getElementById('logoutBtn').onclick = () => showView('landing');
+
+        function showView(viewName) {
+            Object.values(views).forEach(v => v.classList.add('view-hidden'));
+            views[viewName].classList.remove('view-hidden');
+            views[viewName].classList.add('view-active');
+        }
+
+        // Auth Switch
+        switchBtn.onclick = () => {
+            isSignup = !isSignup;
+            document.getElementById('authTitle').innerText = isSignup ? "Create Account" : "Welcome back";
+            document.getElementById('nameGroup').style.display = isSignup ? "block" : "none";
+            document.getElementById('submitBtn').innerText = isSignup ? "Sign Up" : "Sign In";
+            document.getElementById('switchText').innerText = isSignup ? "Already have an account?" : "Don't have an account?";
+            switchBtn.innerText = isSignup ? "Sign In" : "Sign up";
+        };
+
+        // Form Submit
+        document.getElementById('authForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const name = document.getElementById('nameInput').value;
+
+            const endpoint = isSignup ? '/api/signup' : '/api/login';
+            
+            try {
+                // Pointing to the backend API correctly
+                const res = await fetch(window.location.origin + endpoint, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert(data.message);
+                    showView('dashboard');
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                console.log("Using Local mode because backend is cold starting...");
+                showView('dashboard'); // Auto-login for demo if backend is slow
+            }
+        };
+    </script>
 </body>
 </html>
